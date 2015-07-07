@@ -1,0 +1,18 @@
+{
+  "global": {
+    "parseVersion": "1.4.2"
+  },
+  "applications": {
+    "StaffingWidgetProd": {
+      "applicationId": "5pYOx25qvyg4IVXyu128IuRlbnJtwLgwCTsHXCpO",
+      "masterKey": "2xUvmLlh5L0oh7SE7XrlFxtaLkA8kUxP0vI8sFjl"
+    },
+    "StaffingWidgetDev": {
+      "applicationId": "jjQlIo5A3HWAMRMCkH8SnOfimVfCi6QlOV9ZNO2T",
+      "masterKey": "bswubKWU9MvLuQdh8tYbAt9qXu5guxaZBIMTmHsc"
+    },
+    "_default": {
+      "link": "StaffingWidgetDev"
+    }
+  }
+}

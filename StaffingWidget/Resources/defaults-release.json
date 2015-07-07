@@ -1,0 +1,15 @@
+{ "results" : [ { "availableStaffTypes" : [ "Monitor Tech",
+                                           "Baby Specialist",
+                                           "Respiratory Therapist"
+                                           ],
+               "floor" : 5,
+               "maxCensus" : 26,
+               "name" : "Pediatrics",
+               "objectId" : "xboDArgQDH",
+               "shiftTimes" : [ 25200,
+                               39600,
+                               54000,
+                               68400,
+                               82800
+                               ]
+               } ] }

@@ -1,0 +1,55 @@
+{ "results" : [ { "availableStaffTypes" : [ "Monitor Tech",
+                                           "Baby Specialist",
+                                           "Respiratory Therapist"
+                                           ],
+               "floor" : 5,
+               "maxCensus" : 26,
+               "name" : "Pediatrics",
+               "objectId" : "uXD3n0YIP3",
+               "varianceReasons" : [ "Pending Admissions",
+                                  "Pending Discharges",
+                                  "1:1 Suicide Precautions",
+                                  "1:1 Fall Risk",
+                                  "Acuity High/Low - Specify",
+                                  "Staffing Need Not Met - Specify",
+                                  "Other"
+                                  ],
+               "shiftTimes" : [ 25200,
+                               39600,
+                               54000,
+                               68400,
+                               82800
+                               ],
+               "varianceReasons" : [ "Pending Admissions",
+                                    "Pending Discharges",
+                                    "1:1 Suicide Precautions",
+                                    "1:1 Fall Risk",
+                                    "Acuity High/Low - Specify",
+                                    "Staffing Need Not Met - Specify",
+                                    "Other"
+                                    ]
+               },
+               { "availableStaffTypes" : [ "Monitor Tech",
+                                            "Baby Specialist",
+                                            "Respiratory Therapist"
+                                            ],
+               "floor" : 2,
+               "maxCensus" : 32,
+               "name" : "CCU",
+               "objectId" : "xXD3n0YIP3",
+               "shiftTimes" : [ 25200,
+                               39600,
+                               54000,
+                               68400,
+                               82800
+                               ],
+               "varianceReasons" : [ "Pending Admissions",
+                                    "Pending Discharges",
+                                    "1:1 Suicide Precautions",
+                                    "1:1 Fall Risk",
+                                    "Acuity High/Low - Specify",
+                                    "Staffing Need Not Met - Specify",
+                                    "Other"
+                                    ]
+               } ]
+}
