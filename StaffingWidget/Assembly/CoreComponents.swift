@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Typhoon
 
 public class CoreComponents: TyphoonAssembly {
    

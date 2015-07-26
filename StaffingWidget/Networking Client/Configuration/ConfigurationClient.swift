@@ -11,6 +11,4 @@ import Foundation
 @objc protocol ConfigurationClient
 {
     func getConfigurationJSON(facilityId: String, successHandler: (configuration: NSDictionary) -> (), failureHandler: (error: NSError) -> () )
-    
-    func getUnitsJSON(facilityId: String, successHandler: (configuration: NSDictionary) -> (), failureHandler: (error: NSError) -> () )
 }

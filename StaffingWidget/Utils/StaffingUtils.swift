@@ -11,8 +11,12 @@ class StaffingUtils {
         return NSTimeInterval(hour * 60 * 60)
     }
 
-    static func formattedReportingTime(reportingTime: NSTimeInterval) -> String {
-        let hours = Int(reportingTime/3600)
+    static func minutes(minutes: Int) -> NSTimeInterval {
+        return NSTimeInterval(minutes * 60)
+    }
+
+    static func formattedRecordTime(recordTime: NSTimeInterval) -> String {
+        let hours = Int(recordTime/3600)
 
         let postfix = hours >= 12 ? "PM" : "AM"
 
@@ -28,13 +32,14 @@ class StaffingUtils {
     static func currentHour() -> NSTimeInterval {
         let currentDate = NSDate()
         let calendar = NSCalendar.currentCalendar()
-        let components = calendar.components(.CalendarUnitHour, fromDate:  NSDate())
+        let components = calendar.components(.CalendarUnitHour | .CalendarUnitMinute, fromDate:  NSDate())
         let currentHour = components.hour
+        let currentMinute = components.minute
         
-        return self.hour(UInt(currentHour))
+        return self.hour(UInt(currentHour)) + self.minutes(currentMinute)
     }
     
-    static func reportDateFormatter() -> NSDateFormatter {
+    static func recordDateFormatter() -> NSDateFormatter {
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
         return dateFormatter
@@ -49,5 +54,12 @@ class StaffingUtils {
         } else {
             return String(format: "\(prefix)%.0f", staffing)
         }
+    }
+}
+
+extension NSDate {
+    static func tomorrow() -> NSDate {
+        let calendar = NSCalendar.currentCalendar()
+        return calendar.dateByAddingUnit(NSCalendarUnit.CalendarUnitDay, value: 1, toDate: NSDate(), options: NSCalendarOptions(rawValue: 0))!
     }
 }

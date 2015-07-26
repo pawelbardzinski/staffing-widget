@@ -7,41 +7,24 @@
 //
 
 import Foundation
+import Alamofire
 
 class ConfigurationParseClient:NSObject, ConfigurationClient
 {
     func getConfigurationJSON(facilityId: String, successHandler: (configuration: NSDictionary) -> (), failureHandler: (error: NSError) -> () )
     {
-        request(ParseRouter.ReadObject(className: "Facility", objectId: facilityId))
+        request(ParseRouter.GetFacility(facilityId: facilityId))
         .validate()
         .responseJSON { (request, response, returnObject, error) in
                 
-            let json = returnObject as! NSDictionary?
-            
-            if (error != nil)
-            {
+            if (error != nil) {
                 failureHandler(error: ParseData.error(response, error: error!, data: returnObject))
+            } else if let json = (returnObject as? NSDictionary)?["result"] as? NSDictionary {
+                 successHandler(configuration: json)
             } else {
-                
-                 successHandler(configuration: json!)
+                failureHandler(error: ParseData.malformedError())
             }
         }
     }
-    
-    func getUnitsJSON(facilityId: String, successHandler: (configuration: NSDictionary) -> (), failureHandler: (error: NSError) -> () )
-    {
-        request(ParseRouter.GetUnitsForFacility(facilityId: facilityId))
-        .validate()
-        .responseJSON { (request, response, returnObject, error) in
-            
-            let json = returnObject as! NSDictionary?
-            
-            if (error != nil)
-            {
-                failureHandler(error: ParseData.error(response, error: error!, data: returnObject))
-            } else {
-                successHandler(configuration: json!)
-            }
-        }
-    }
+
 }

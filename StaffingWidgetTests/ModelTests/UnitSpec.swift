@@ -18,7 +18,7 @@ class UnitSpec: QuickSpec {
             it("will have a floor") {
                 expect(unit.floor).to(beGreaterThan(0))
             }
-            it("will have 1 or more reporting times"){
+            it("will have 1 or more record times"){
                 expect(unit.shiftTimes).notTo(beEmpty())
                 expect(unit.shiftTimes.count).to(beGreaterThan(1))
             }

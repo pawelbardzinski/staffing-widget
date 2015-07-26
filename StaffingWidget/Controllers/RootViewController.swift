@@ -22,7 +22,7 @@ class RootViewController: UITabBarController {
         
         // Only show the worksheet tab if the user has permission to view it
         if UserManager.roleInfo?.viewWorksheet ?? false {
-            viewControllers.append(assembly.reportNavControllerFromStoryboard() as! UIViewController)
+            viewControllers.append(assembly.recordNavControllerFromStoryboard() as! UIViewController)
         }
         
         if UserManager.roleInfo?.viewDashboard ?? false {

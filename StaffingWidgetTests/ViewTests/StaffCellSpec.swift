@@ -18,7 +18,7 @@ class StaffCellSpec: QuickSpec {
                     expect(cell.gridValueLabel).toNot(beNil())
                     expect(cell.varianceLabel).toNot(beNil())
                     expect(cell.availableStaffStepper).toNot(beNil())
-                    expect(cell.actualStaffStepper).toNot(beNil())
+                    expect(cell.requestedStaffStepper).toNot(beNil())
                 }
             }
         }

@@ -14,14 +14,14 @@ class WHPPDCellSpec: QuickSpec {
             context("when loaded from nib") {
                 it("should have valid outlets") {
                     expect(cell.gridValueLabel).toNot(beNil())
-                    expect(cell.actualStaffLabel).toNot(beNil())
+                    expect(cell.availableStaffLabel).toNot(beNil())
                 }
             }
             context("after the view has been loaded") {
                 it("configure should format the gridValueLabel correctly") {
-                    cell.configure(22.32, actualWHPPD: 22.0)
+                    cell.configure(22.32, availableWHPPD: 22.0)
                     expect(cell.gridValueLabel.text) == "22.3"
-                    cell.configure(22.7901, actualWHPPD: 22.0)
+                    cell.configure(22.7901, availableWHPPD: 22.0)
                     expect(cell.gridValueLabel.text) == "22.8"
                 }
             }

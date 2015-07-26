@@ -10,7 +10,7 @@ import UIKit
 import Argo
 import Runes
 
-struct Unit {
+struct Unit: Equatable {
    
     var objectId = ""
     var name = ""
@@ -22,7 +22,7 @@ struct Unit {
     
     // MARK: - Methods for testing with fake data
     
-    func nextReportingTime() -> NSTimeInterval {
+    func nextRecordTime() -> NSTimeInterval {
         
         var filteredShifts = shiftTimes.filter { $0 >= StaffingUtils.currentHour() }
         if (filteredShifts.count > 0)
@@ -34,12 +34,15 @@ struct Unit {
         }
     }
     
-    func hasBeenReported(reportingTime: NSTimeInterval) -> Bool {
-        return reportingTime < StaffingUtils.currentHour()
+    func hasBeenRecorded(recordTime: NSTimeInterval) -> Bool {
+        return recordTime < StaffingUtils.currentHour()
     }
     
 }
 
+func ==(lhs: Unit, rhs: Unit) -> Bool {
+    return lhs.objectId == rhs.objectId
+}
 
 // MARK: - JSON Decoding
 

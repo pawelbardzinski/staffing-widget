@@ -9,6 +9,7 @@
 import Foundation
 import Parse
 import Argo
+import Locksmith
 
 class UserManager: NSObject {
 
@@ -26,6 +27,38 @@ class UserManager: NSObject {
         }
     }
     
+    static func updateInstallationDevice(deviceTokenData: NSData?)
+    {
+        let installation = PFInstallation.currentInstallation()
+        if (deviceTokenData != nil)
+        {
+            installation.setDeviceTokenFromData(deviceTokenData)
+        } else {
+            installation.deviceToken = ""
+        }
+        installation.saveInBackground()
+    }
+    
+    static func updateInstallationUser() {
+        // associate or disassociate the user from the installation
+        // used for push notifications
+        let installation = PFInstallation.currentInstallation()
+        if (installation.deviceToken != nil)
+        {
+            if (self.userObjectId != nil)
+            {
+                var user = PFUser(withoutDataWithObjectId: self.userObjectId)
+                installation.setObject(user, forKey: "user")
+                
+            } else {
+                installation.removeObjectForKey("user")
+            }
+            
+            // link the installation with the user, for use in push messaging
+            installation.saveInBackground()
+        }
+    }
+    
     static var userObjectId : String? {
         get {
             // get from nsuserdefaults
@@ -38,21 +71,7 @@ class UserManager: NSObject {
             let defaults = NSUserDefaults.standardUserDefaults()
             defaults.setObject(newValue, forKey: "UserObjectId")
             
-            // associate or disassociate the user from the installation
-            // used for push notifications
-            let installation = PFInstallation.currentInstallation()
-            if (newValue != nil)
-            {
-                var user = PFUser(withoutDataWithObjectId: userObjectId)
-                installation.setObject(user, forKey: "user")
-
-            } else {
-                installation.removeObjectForKey("user")
-            }
-            
-            // link the installation with the user, for use in push messaging
-
-            installation.save()
+            self.updateInstallationUser()
         }
     }
     
@@ -67,6 +86,29 @@ class UserManager: NSObject {
             // store in user defaults
             let defaults = NSUserDefaults.standardUserDefaults()
             defaults.setObject(newValue, forKey: "FacilityId")
+        }
+    }
+
+    static var facility : Facility? {
+        get {
+            // get from nsuserdefaults
+            let defaults = NSUserDefaults.standardUserDefaults()
+            if let json = defaults.objectForKey("Facility") as? NSDictionary {
+                let facility: Decoded<Facility> = decode(json)
+
+                switch facility {
+                case .Success(let box):
+                    return box.value
+                case .TypeMismatch(let error):
+                    log.error("Type mismatch while parsing the facility object: \(error)")
+                    return nil
+                case .MissingKey(let key):
+                    log.error("Missing key while parsing the facility object: \(key)")
+                    return nil
+                }
+            } else {
+                return nil
+            }
         }
     }
     

@@ -37,9 +37,4 @@ class ConfigurationFileClient:NSObject, ConfigurationClient
             }
         }
     }
-    
-    func getUnitsJSON(facilityId: String, successHandler: (configuration: NSDictionary) -> (), failureHandler: (error: NSError) -> () )
-    {
-        getConfigurationJSON(facilityId, successHandler: successHandler, failureHandler: failureHandler)
-    }
 }

@@ -7,7 +7,7 @@ class CensusViewControllerSpec: QuickSpec {
             var censusVc: CensusViewController!
             let storyboard = UIStoryboard(name: "Main", bundle: NSBundle(forClass: self.dynamicType))
             censusVc = storyboard.instantiateViewControllerWithIdentifier("census") as! CensusViewController
-            
+            censusVc.censusClient = RecordClientTestImplementation()
             censusVc.loadView()
 //          TODO: Ticket #122 censusVc.viewDidLoad()
             context("when loaded from nib") {

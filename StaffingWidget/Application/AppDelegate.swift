@@ -9,6 +9,7 @@
 import UIKit
 import HockeySDK
 import Parse
+import XCGLogger
 
 let log = XCGLogger.defaultInstance()
 
@@ -72,10 +73,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             application.registerForRemoteNotificationTypes(types)
         }
         
-        // For now, we're not showing the census view on the iPhone, so set the report navigation controller
+        // For now, we're not showing the census view on the iPhone, so set the record navigation controller
         // as the root view controller
         if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
-            self.window!.rootViewController! = assembly.storyboard().instantiateViewControllerWithIdentifier("ReportNavController") as! UIViewController
+            self.window!.rootViewController! = assembly.storyboard().instantiateViewControllerWithIdentifier("RecordNavController") as! UIViewController
         }
         
         // Push the login view controller if necessary
@@ -91,9 +92,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
-        let installation = PFInstallation.currentInstallation()
-        installation.setDeviceTokenFromData(deviceToken)
-        installation.saveInBackground()
+        UserManager.updateInstallationDevice(deviceToken)
+        UserManager.updateInstallationUser()
     }
     
     func application(application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: NSError) {
@@ -104,14 +104,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
+    func application(application: UIApplication, didRegisterUserNotificationSettings notificationSettings: UIUserNotificationSettings) {
+        if (notificationSettings.types == UIUserNotificationType.None)
+        {
+            UserManager.updateInstallationDevice(nil)
+        }
+        
+        UserManager.updateInstallationUser()
+    }
+    
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
         if application.applicationState == UIApplicationState.Inactive {
             PFAnalytics.trackAppOpenedWithRemoteNotificationPayload(userInfo)
         }
         
-        if let reportId = userInfo["reportId"] as? String {
+        if let recordId = userInfo["recordId"] as? String {
             if application.applicationState == UIApplicationState.Inactive {
-                displayReport(reportId)
+                displayRecord(recordId)
             } else {
                 let alertController = UIAlertController(title: nil,
                         message: ((userInfo["aps"] as! NSDictionary)["alert"]) as? String, preferredStyle: .Alert)
@@ -121,29 +130,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
                 alertController.addAction(cancelAction)
                 let viewAction = UIAlertAction(title: "View", style: .Default) { (action) in
-                    self.displayReport(reportId)
+                    self.displayRecord(recordId)
                 }
                 alertController.addAction(viewAction)
                 
-                self.reportNavController().presentViewController(alertController, animated: true) {
+                self.worksheetNavController().presentViewController(alertController, animated: true) {
                     // Ignore completion...
                 }
             }
         } else {
-            log.warning("Push notification is missing report ID!")
+            log.warning("Push notification is missing record ID!")
         }
     }
     
-    func displayReport(reportId: String) {
-        let navController = reportNavController()
-        let reportController = assembly.reportViewControllerFromStoryboard() as! ReportViewController
-        reportController.reportId = reportId
-        reportController.navigationItem.rightBarButtonItem = nil // Don't show the sign out button for a pushed VC
+    func displayRecord(recordId: String) {
+        let navController = worksheetNavController()
+        let worksheetController = assembly.worksheetViewControllerFromStoryboard() as! WorksheetViewController
+        worksheetController.recordId = recordId
+        worksheetController.navigationItem.rightBarButtonItem = nil // Don't show the sign out button for a pushed VC
         
-        navController.pushViewController(reportController, animated: false)
+        navController.pushViewController(worksheetController, animated: false)
     }
     
-    func reportNavController() -> UINavigationController {
+    func worksheetNavController() -> UINavigationController {
 
         if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
             return self.window!.rootViewController as! UINavigationController

@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 reallyseth.com. All rights reserved.
 //
 
+import Typhoon
 
 public class ApplicationAssembly: TyphoonAssembly {
     
@@ -48,8 +49,8 @@ public class ApplicationAssembly: TyphoonAssembly {
         }
     }
     
-    public dynamic func reportViewController() -> AnyObject {
-        return TyphoonDefinition.withClass(ReportViewController.self) {
+    public dynamic func worksheetViewController() -> AnyObject {
+        return TyphoonDefinition.withClass(WorksheetViewController.self) {
             (definition) in
             
             definition.injectProperty("assembly", with: self)
@@ -92,10 +93,10 @@ public class ApplicationAssembly: TyphoonAssembly {
         })
     }
     
-    public dynamic func reportViewControllerFromStoryboard() -> AnyObject {
+    public dynamic func worksheetViewControllerFromStoryboard() -> AnyObject {
         return TyphoonDefinition.withFactory(self.storyboard(), selector: "instantiateViewControllerWithIdentifier:", parameters: {
             (factoryMethod) in
-            factoryMethod.injectParameterWith("ReportViewController")
+            factoryMethod.injectParameterWith("WorksheetViewController")
         })
     }
     
@@ -106,10 +107,10 @@ public class ApplicationAssembly: TyphoonAssembly {
         })
     }
     
-    public dynamic func reportNavControllerFromStoryboard() -> AnyObject {
+    public dynamic func recordNavControllerFromStoryboard() -> AnyObject {
         return TyphoonDefinition.withFactory(self.storyboard(), selector: "instantiateViewControllerWithIdentifier:", parameters: {
             (factoryMethod) in
-            factoryMethod.injectParameterWith("ReportNavController")
+            factoryMethod.injectParameterWith("RecordNavController")
         })
     }
     

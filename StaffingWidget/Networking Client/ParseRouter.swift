@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Alamofire
 
 enum ParseRouter: URLRequestConvertible {
     static let baseURLString = "https://api.parse.com/1"
@@ -19,13 +20,15 @@ enum ParseRouter: URLRequestConvertible {
     case DestroyObject(className: String, objectId: String)
     case UpsertObject(className: String, objectId: String?, json: [String: AnyObject])
     case BatchOperation(operations: [ParseRouter])
-    case GetReport(unitId: String, timestamp: ReportTimestamp)
-    case GetExistingReport(reportId: String)
-    case GetCurrentReports(facilityId: String, currentTime: NSTimeInterval, currentDate: NSDate)
-    case GetUnitsForFacility(facilityId: String)
-    case GetLastDayReports(facilityId: String)
+    case GetRecord(unitId: String, timestamp: RecordTimestamp)
+    case GetExistingRecord(recordId: String)
+    case GetWorksheet(facilityId: String, timestamp: RecordTimestamp)
+    case SaveWorksheet(worksheet: Worksheet)
+    case GetFacility(facilityId: String)
+    case GetLastDayRecords(facilityId: String)
+    case GetInstanceTargetReport(thisMonth: String?)
     
-    var method: Method {
+    var method: Alamofire.Method {
         switch self {
         case .Login:
             return .GET
@@ -43,15 +46,17 @@ enum ParseRouter: URLRequestConvertible {
             return objectId == nil ? .POST : .PUT
         case .BatchOperation:
             return .POST
-        case .GetReport:
+        case .GetRecord:
             return .POST
-        case .GetExistingReport:
+        case .GetExistingRecord:
             return .POST
-        case .GetCurrentReports:
+        case .GetWorksheet, .SaveWorksheet:
             return .POST
-        case .GetUnitsForFacility(let facilityId):
-            return .GET
-        case .GetLastDayReports(let facilityId):
+        case .GetFacility(let facilityId):
+            return .POST
+        case .GetLastDayRecords(let facilityId):
+            return .POST
+        case .GetInstanceTargetReport(let thisMonth):
             return .POST
         }
     }
@@ -78,16 +83,20 @@ enum ParseRouter: URLRequestConvertible {
             }
         case .BatchOperation:
             return "/batch"
-        case .GetReport:
-            return "/functions/getReport"
-        case .GetExistingReport:
-            return "/functions/getExistingReport"
-        case .GetCurrentReports:
-            return "/functions/getCurrentReports"
-        case .GetUnitsForFacility(let facilityId):
-            return "/classes/Unit/"
-        case .GetLastDayReports(let facilityId):
-            return "/functions/getLastDayReports"
+        case .GetRecord:
+            return "/functions/getRecord"
+        case .GetExistingRecord:
+            return "/functions/getExistingRecord"
+        case .GetWorksheet:
+            return "/functions/getWorksheet"
+        case .SaveWorksheet:
+            return "/functions/saveWorksheet"
+        case .GetFacility(let facilityId):
+            return "/functions/getFacility/"
+        case .GetLastDayRecords(let facilityId):
+            return "/functions/getLastDayRecords"
+        case .GetInstanceTargetReport(let thisMonth):
+            return "/functions/instanceTargetReport"
         }
     }
     
@@ -130,31 +139,37 @@ enum ParseRouter: URLRequestConvertible {
             ]
             
             return ParameterEncoding.JSON.encode(mutableURLRequest, parameters: json).0
-        case .GetReport(let unitId, let timestamp):
+        case .GetRecord(let unitId, let timestamp):
             let json: [String: AnyObject] = [
                 "unitId": unitId,
-                "reportingTime": timestamp.time,
-                "reportingDateString": StaffingUtils.reportDateFormatter().stringFromDate(timestamp.date)
+                "recordTime": timestamp.time,
+                "recordDateString": StaffingUtils.recordDateFormatter().stringFromDate(timestamp.date)
             ]
             
             return ParameterEncoding.JSON.encode(mutableURLRequest, parameters: json).0
-        case .GetExistingReport(let reportId):
+        case .GetExistingRecord(let recordId):
             let json: [String: AnyObject] = [
-                "reportId": reportId
+                "recordId": recordId
             ]
             
             return ParameterEncoding.JSON.encode(mutableURLRequest, parameters: json).0
-        case .GetCurrentReports(let facilityId, let currentTime, let currentDate):
+        case .GetWorksheet(let facilityId, let timestamp):
             let json: [String: AnyObject] = [
                 "facilityId": facilityId,
-                "currentTime": currentTime,
-                "dateString": StaffingUtils.reportDateFormatter().stringFromDate(currentDate)
+                "time": timestamp.time,
+                "dateString": StaffingUtils.recordDateFormatter().stringFromDate(timestamp.date)
             ]
             
             return ParameterEncoding.JSON.encode(mutableURLRequest, parameters: json).0
-        case .GetUnitsForFacility(let facilityId):
-            return ParameterEncoding.URL.encode(mutableURLRequest, parameters: ["where": ["facility":["__type": "Pointer", "className": "Facility", "objectId": facilityId]]]).0
-        case .GetLastDayReports(let facilityId):
+        case .SaveWorksheet(let worksheet):
+            return ParameterEncoding.JSON.encode(mutableURLRequest, parameters: worksheet.json).0
+        case .GetFacility(let facilityId):
+            let json: [String: AnyObject] = [
+                    "facilityId": facilityId
+            ]
+
+            return ParameterEncoding.JSON.encode(mutableURLRequest, parameters: json).0
+        case .GetLastDayRecords(let facilityId):
             
             let date = NSDate()
             let cal = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)
@@ -163,10 +178,23 @@ enum ParseRouter: URLRequestConvertible {
             let json: [String: AnyObject] = [
                 "facilityId": facilityId,
                 "currentSecondsFromMidnight": date.timeIntervalSinceDate(midnight),
-                "currentDateString": StaffingUtils.reportDateFormatter().stringFromDate(date)
+                "currentDateString": StaffingUtils.recordDateFormatter().stringFromDate(date)
             ]
             
             return ParameterEncoding.JSON.encode(mutableURLRequest, parameters: json).0
+        case .GetInstanceTargetReport(let thisMonth):
+            
+            if let monthString = thisMonth
+            {
+                let json: [String: AnyObject] = [
+                    "thisMonthString": monthString
+                ]
+                
+                return ParameterEncoding.JSON.encode(mutableURLRequest, parameters: json).0
+            } else {
+                return ParameterEncoding.JSON.encode(mutableURLRequest, parameters: [:]).0
+            }
+            
         default:
             return mutableURLRequest
         }

@@ -6,6 +6,8 @@
 //  Copyright (c) 2015 ANH. All rights reserved.
 //
 
+import JVFloatLabeledTextField
+
 class LoginViewController: UIViewController, UITextFieldDelegate {
     
     var loginClient: LoginClient!
@@ -122,14 +124,14 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 () -> () in
                 // got the facility details
                 
-                PKHUD.sharedHUD.hide(animated: true)
+                PKHUD.sharedHUD.hide(animated: false)
                 
                 self.dismissViewControllerAnimated(true, completion: nil)
                 
             }, failureHandler: {
                 (error) -> () in
                 
-                PKHUD.sharedHUD.hide(animated: true)
+                PKHUD.sharedHUD.hide(animated: false)
                 
                 // failed to get facility
                 self.displayError(error, tryAgainCallback: {

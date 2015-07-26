@@ -8,6 +8,7 @@
 
 import Parse
 import Argo
+import Alamofire
 
 class LoginClientParseImplementation:NSObject, LoginClient {
     

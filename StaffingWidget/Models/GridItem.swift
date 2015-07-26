@@ -21,14 +21,25 @@ struct GridItem: Equatable
     var visible:Bool
 
     var availableStaff: Double
-    var actualStaff: Double
+    var requestedStaff: Double
+
+    var changes: [StaffChange]
+
+    // MARK: - Read-only properties
+    
+    var actualStaff: Double {
+        return availableStaff - Double(changes.reduce(0, combine: { return $0 + $1.count }))
+    }
+    
+    var resourceVariance: Double {
+        return actualStaff - requestedStaff
+    }
     
     var maxCensus: Int {
-        
         return staffGrid.count == 0 ? 0 : staffGrid.count - 1
     }
     
-    func gridStaffForCensus(census: Int) -> Int? {
+    func recommendedStaffForCensus(census: Int) -> Int? {
         if census < 0 || census >= staffGrid.count {
             return nil
         } else {
@@ -37,12 +48,37 @@ struct GridItem: Equatable
     }
     
     func staffVarianceForCensus(census: Int) -> Double? {
-        let gridStaff = gridStaffForCensus(census)
+        let recommendedStaff = recommendedStaffForCensus(census)
         
-        if gridStaff != nil {
-            return actualStaff - Double(gridStaff!)
+        if recommendedStaff != nil {
+            return actualStaff - Double(recommendedStaff!)
         } else {
             return nil
+        }
+    }
+
+    var changeDescriptions: [String] {
+        return changes.filter({ $0.count > 0 }).map({ $0.description })
+    }
+
+    mutating func addChange(change: StaffChange) {
+        var matchIndex = find(changes, change)
+        var reverseMatchIndex = change.reversedChange != nil ? find(changes, change.reversedChange!) : nil
+
+        if matchIndex != nil {
+            changes[matchIndex!].count += change.count
+
+            if changes[matchIndex!].count == 0 {
+                changes.removeAtIndex(matchIndex!)
+            }
+        } else if reverseMatchIndex != nil {
+            changes[reverseMatchIndex!].count -= change.count
+
+            if changes[reverseMatchIndex!].count == 0 {
+                changes.removeAtIndex(reverseMatchIndex!)
+            }
+        } else {
+            changes.append(change)
         }
     }
     
@@ -55,8 +91,10 @@ struct GridItem: Equatable
             "visible": visible,
             "availableStaff": availableStaff,
             "actualStaff": actualStaff,
-            "gridStaff": gridStaffForCensus(census) ?? 0,
-            "staffVariance": staffVarianceForCensus(census) ?? 0
+            "requestedStaff": requestedStaff,
+            "recommendedStaff": recommendedStaffForCensus(census) ?? 0,
+            "staffVariance": staffVarianceForCensus(census) ?? 0,
+            "resourceVariance": resourceVariance
         ]
     }
     
@@ -65,7 +103,8 @@ struct GridItem: Equatable
             "visible": visible,
             "availableStaff": availableStaff,
             "actualStaff": actualStaff,
-            "gridStaff": gridStaffForCensus(census) ?? 0,
+            "requestedStaff": requestedStaff,
+            "recommendedStaff": recommendedStaffForCensus(census) ?? 0,
             "staffVariance": staffVarianceForCensus(census) ?? 0
         ]
     }
@@ -77,9 +116,9 @@ func ==(lhs: GridItem, rhs: GridItem) -> Bool {
 
 
 extension GridItem: Decodable {
-    static func create(objectId: String?)(staffTypeName: String)(index: Int)(staffGrid: [Int])(required: Bool)(visible: Bool)(availableStaff: Double)(actualStaff: Double) -> GridItem {
+    static func create(objectId: String?)(staffTypeName: String)(index: Int)(staffGrid: [Int])(required: Bool)(visible: Bool)(availableStaff: Double)(requestedStaff: Double)(changes: [StaffChange]?) -> GridItem {
         return GridItem(objectId: objectId, staffTypeName: staffTypeName, index: index, staffGrid: staffGrid, required: required,
-            visible: visible, availableStaff: availableStaff, actualStaff: actualStaff)
+            visible: visible, availableStaff: availableStaff, requestedStaff: requestedStaff, changes: changes ?? [])
     }
     
     static func decode(j: JSON) -> Decoded<GridItem> {
@@ -91,6 +130,7 @@ extension GridItem: Decodable {
             <*> j <| "required"
             <*> j <| "visible"
             <*> j <| "availableStaff"
-            <*> j <| "actualStaff"
+            <*> j <| "requestedStaff"
+            <*> j <||? "changes"
     }
 }

@@ -8,19 +8,25 @@
 
 import Foundation
 
-enum StaffingColors : Int {
-    case LateUnfilledReport, LateUnconfirmedReport, CompleteReport, UpcomingReport;
+enum StaffingColors {
+    case LateUnfilledRecord, LateUnconfirmedRecord, CompleteRecord, UpcomingRecord
+    case FlexOff(highlighted: Bool)
+    case CallInExtra(highlighted: Bool)
     
     func color() -> UIColor {
         switch (self) {
-        case .CompleteReport:
+        case .CompleteRecord:
             return UIColor(red: 80.0/255.0, green: 227.0/255.0, blue: 194.0/255.0, alpha: 1.0)
-        case .LateUnfilledReport:
+        case .LateUnfilledRecord:
             return UIColor(red: 215.0/255.0, green: 83.0/255.0, blue: 83.0/255.0, alpha: 1.0)
-        case .LateUnconfirmedReport:
+        case .LateUnconfirmedRecord:
             return UIColor(red: 245.0/255.0, green: 166.0/255.0, blue: 35.0/255.0, alpha: 1.0)
-        case .UpcomingReport:
+        case .UpcomingRecord:
             return UIColor(red: 217.0/255.0, green: 217.0/255.0, blue: 217.0/255.0, alpha: 1.0)
+        case .FlexOff(let highlighted):
+            return UIColor(red:0.96, green:0.26, blue:0.21, alpha: highlighted ? 0.2 : 0.1)
+        case .CallInExtra(let highlighted):
+            return UIColor(red:0.3, green:0.69, blue:0.31, alpha: highlighted ? 0.2 : 0.1)
         default:
             return UIColor.blackColor()
         }

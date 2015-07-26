@@ -7,22 +7,23 @@
 //
 
 import UIKit
+import SLExpandableTableView
 
 protocol CensusListDelegate
 {
-    func reportSelected(report : Report)
+    func recordSelected(record : CensusRecord)
 }
 
-class CensusListTVC: UITableViewController, UITableViewDataSource, UITableViewDelegate {
+class CensusListTVC: UITableViewController, UITableViewDataSource, UITableViewDelegate, SLExpandableTableViewDatasource, SLExpandableTableViewDelegate {
     
     // MARK: - Properties
     
     var delegate: CensusListDelegate!
     var assembly: ApplicationAssembly!
     var configurationManager:ConfigurationManager!    
-    let reportClient: ReportClient = ReportClientParseImplementation()
-    var pastReports:Array<Report> = []
-    var upcomingReports:Array<Report> = []
+    let censusClient: CensusClient = CensusClientParseImplementation()
+    var pastRecords:Array<CensusRecord> = []
+    var upcomingRecords:Array<CensusRecord> = []
     var previousSelectedCellIndex:NSIndexPath?
     var selectedCellIndex:NSIndexPath?
     
@@ -32,19 +33,19 @@ class CensusListTVC: UITableViewController, UITableViewDataSource, UITableViewDe
         self.tableView.selectRowAtIndexPath(self.selectedCellIndex, animated: false, scrollPosition: UITableViewScrollPosition.None)
     }
     
-    func loadReports() {
+    func loadRecords() {
         var contentView = PKHUDProgressView()
         PKHUD.sharedHUD.contentView = contentView
         PKHUD.sharedHUD.show()
         
-        reportClient.getLastDayReports(UserManager.facilityId!, successHandler: { (reports) -> () in
+        censusClient.getLastDayRecords(UserManager.facilityId!, successHandler: { (records) -> () in
             PKHUD.sharedHUD.hide(animated: true)
             
             //success!
             let currentHour = StaffingUtils.currentHour()
-            let currentDateString = StaffingUtils.reportDateFormatter().stringFromDate(NSDate())
-            self.pastReports = reports.filter({$0.reportingDateString != currentDateString || $0.reportingTime < currentHour})
-            self.upcomingReports = reports.filter({$0.reportingDateString == currentDateString && $0.reportingTime >= currentHour})
+            let currentDateString = StaffingUtils.recordDateFormatter().stringFromDate(NSDate())
+            self.pastRecords = records.filter({$0.recordDateString != currentDateString || $0.recordTime < currentHour})
+            self.upcomingRecords = records.filter({$0.recordDateString == currentDateString && $0.recordTime >= currentHour})
             self.tableView.reloadData()
         }) { (error) -> () in
             PKHUD.sharedHUD.hide(animated: false)
@@ -59,22 +60,23 @@ class CensusListTVC: UITableViewController, UITableViewDataSource, UITableViewDe
         return 2
     }
     
-    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if (section == 0)
-        {
-            return ""
-        } else {
-            return "Past Reports"
-        }
-    }
-    
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         if (section == 0)
         {
-            return upcomingReports.count
+            return upcomingRecords.count
         } else {
-            return pastReports.count
+            // the expandable table adds the expand cell at row 0
+            return pastRecords.count + 1
+        }
+    }
+    
+    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        if (indexPath.section == 1 && indexPath.row == 0)
+        {
+            return 100.0
+        } else {
+            return 44.0
         }
     }
     
@@ -84,11 +86,17 @@ class CensusListTVC: UITableViewController, UITableViewDataSource, UITableViewDe
         
         if (indexPath.section == 0)
         {
-            let report = upcomingReports[indexPath.row]
-            cell.configureWithReport(report)
+            let record = upcomingRecords[indexPath.row]
+            cell.configureWithRecord(record)
         } else {
-            let report = pastReports[indexPath.row]
-            cell.configureWithReport(report)
+            // the expandable table adds the expand cell at row 0
+            let record = pastRecords[indexPath.row - 1]
+            cell.configureWithRecord(record)
+        }
+        
+        if (indexPath == selectedCellIndex)
+        {
+            tableView.selectRowAtIndexPath(indexPath, animated: false, scrollPosition: UITableViewScrollPosition.None)
         }
         
         return cell
@@ -103,28 +111,59 @@ class CensusListTVC: UITableViewController, UITableViewDataSource, UITableViewDe
         
         if (indexPath.section == 0)
         {
-            let report = upcomingReports[indexPath.row]
-            delegate.reportSelected(report)
+            let record = upcomingRecords[indexPath.row]
+            delegate.recordSelected(record)
         } else {
-            let report = pastReports[indexPath.row]
-            delegate.reportSelected(report)
+            // the expandable table adds the expand cell at row 0
+            let record = pastRecords[indexPath.row - 1]
+            delegate.recordSelected(record)
         }
+    }
+    
+    // MARK: - SLExpandableTableViewDatasource
+    
+    func tableView(tableView: SLExpandableTableView!, canExpandSection section: Int) -> Bool {
+        if (section == 1)
+        {
+            return true
+        }
+        
+        return false
+    }
+    
+    func tableView(tableView: SLExpandableTableView!, needsToDownloadDataForExpandableSection section: Int) -> Bool {
+        return false
+    }
+    
+    func tableView(tableView: SLExpandableTableView!, expandingCellForSection section: Int) -> UITableViewCell! {
+        let cell = tableView.dequeueReusableCellWithIdentifier("CensusListHeaderCell") as! CensusListHeaderCell
+        
+        cell.titleLabel!.text = "Past Records"
+        
+        return cell
+    }
+    
+    // MARK: - SLExpandableTableViewDelegate
+    
+    func tableView(tableView: SLExpandableTableView!, downloadDataForExpandableSection section: Int) {
+        // nothing to see here
     }
 }
 
 extension CensusListTVC: CensusDelegate {
-    func reportUpdated(report : Report)
+    func recordUpdated(record : CensusRecord)
     {
         if (previousSelectedCellIndex!.section == 0)
         {
-            upcomingReports[previousSelectedCellIndex!.row] = report
+            upcomingRecords[previousSelectedCellIndex!.row] = record
         } else {
-            pastReports[previousSelectedCellIndex!.row] = report
+            // the expandable table adds the expand cell at row 0            
+            pastRecords[previousSelectedCellIndex!.row - 1] = record
         }
         
         self.tableView.reloadRowsAtIndexPaths([previousSelectedCellIndex!], withRowAnimation: UITableViewRowAnimation.Automatic)
         
-        // if there is no selected cell (happens when confirming a report twice)
+        // if there is no selected cell (happens when confirming a record twice)
         // then select the cell
         if (tableView.indexPathForSelectedRow() == nil)
         {
