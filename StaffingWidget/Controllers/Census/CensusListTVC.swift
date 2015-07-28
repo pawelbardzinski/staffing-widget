@@ -27,6 +27,9 @@ class CensusListTVC: UITableViewController, UITableViewDataSource, UITableViewDe
     var previousSelectedCellIndex:NSIndexPath?
     var selectedCellIndex:NSIndexPath?
     
+    override func viewDidLoad() {
+            self.tableView.accessibilityLabel = "Census Records List"
+    }
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         

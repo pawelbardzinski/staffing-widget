@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="N29-Y8-FuC">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14F6a" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="N29-Y8-FuC">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
         <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
@@ -302,6 +302,7 @@
                                     </view>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="10" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SM6-oh-giJ">
                                         <rect key="frame" x="249" y="45" width="31" height="40"/>
+                                        <accessibility key="accessibilityConfiguration" label="Previous Census"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="40" id="KZO-Ps-GnI"/>
                                         </constraints>
@@ -643,7 +644,7 @@
                             </scrollView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <accessibility key="accessibilityConfiguration" label="CensusView"/>
+                        <accessibility key="accessibilityConfiguration" label="Census Screen"/>
                         <constraints>
                             <constraint firstItem="ncr-1R-gUc" firstAttribute="top" secondItem="3bR-3D-HbK" secondAttribute="bottom" id="6Sp-HQ-AzH"/>
                             <constraint firstItem="E5d-4E-4Cz" firstAttribute="leading" secondItem="AeF-0U-4Dl" secondAttribute="leadingMargin" constant="-20" id="6nn-hB-pXF"/>
@@ -803,6 +804,7 @@
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jCy-4R-bpE" userLabel="statusView">
                                             <rect key="frame" x="8" y="7" width="30" height="30"/>
                                             <color key="backgroundColor" red="1" green="1" blue="0.27366197110000001" alpha="1" colorSpace="calibratedRGB"/>
+                                            <accessibility key="accessibilityConfiguration" label="Status"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="30" id="36v-Kg-Pyd"/>
                                                 <constraint firstAttribute="width" constant="30" id="52n-gb-vrB"/>
@@ -810,6 +812,7 @@
                                         </view>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TKJ-CD-yWf" userLabel="titleLabel">
                                             <rect key="frame" x="46" y="11" width="546" height="21"/>
+                                            <accessibility key="accessibilityConfiguration" label="Title"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
@@ -824,6 +827,7 @@
                                         <constraint firstAttribute="centerY" secondItem="jCy-4R-bpE" secondAttribute="centerY" id="sa5-zA-CdY"/>
                                     </constraints>
                                 </tableViewCellContentView>
+                                <accessibility key="accessibilityConfiguration" label=""/>
                                 <connections>
                                     <outlet property="statusView" destination="jCy-4R-bpE" id="RI8-rn-XvP"/>
                                     <outlet property="titleLabel" destination="TKJ-CD-yWf" id="LeI-Nn-uVx"/>
@@ -1522,7 +1526,7 @@
                             </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <accessibility key="accessibilityConfiguration" label="WorksheetView"/>
+                        <accessibility key="accessibilityConfiguration" label="Worksheet Screen"/>
                         <constraints>
                             <constraint firstAttribute="centerX" secondItem="EZQ-Zu-Hlk" secondAttribute="trailing" id="951-dR-wT9"/>
                             <constraint firstItem="i3u-PD-e6b" firstAttribute="top" secondItem="Bfz-i5-hCu" secondAttribute="bottom" id="A1A-AZ-Osc"/>

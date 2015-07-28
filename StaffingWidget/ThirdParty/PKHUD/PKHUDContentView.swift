@@ -136,7 +136,7 @@ private let defaultSquareFrame = CGRect(origin: CGPointZero, size: CGSize(width:
             return animation
             }(), forKey: "transform.rotation.z")
         imageView.alpha = 0.9
-        imageView.accessibilityLabel = "progress"
+        imageView.accessibilityLabel = "Progress"
     }
 }
 

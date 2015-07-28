@@ -32,13 +32,16 @@ class CensusListCell: UITableViewCell {
         switch record.status {
             case .New:
                 if upcoming {
+                    statusView.accessibilityLabel = "Upcoming";
                     statusView.backgroundColor = StaffingColors.UpcomingRecord.color()
                 } else {
                     statusView.backgroundColor = StaffingColors.LateUnfilledRecord.color()
                 }
             case .Saved, .Adjusted:
+                statusView.accessibilityLabel = "Late Unconfirmed"
                 statusView.backgroundColor = StaffingColors.LateUnconfirmedRecord.color()
             case .Confirmed:
+                statusView.accessibilityLabel = "Complete"
                 statusView.backgroundColor = StaffingColors.CompleteRecord.color()
             default:
                 log.warning("Unrecognized record status: " + record.status.rawValue)

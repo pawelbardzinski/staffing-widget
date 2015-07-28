@@ -75,6 +75,7 @@ class CensusViewController: UIViewController, UITableViewDataSource, UITableView
         let splitViewController = self.navigationController?.parentViewController as! UISplitViewController
         navigationItem.leftItemsSupplementBackButton = true
         navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem()
+        navigationItem.leftBarButtonItem?.accessibilityLabel = "Show Records"
 
         let navVC = splitViewController.viewControllers[0] as! UINavigationController
         censusListTVC = navVC.topViewController as! CensusListTVC
@@ -89,6 +90,9 @@ class CensusViewController: UIViewController, UITableViewDataSource, UITableView
             // update grid values here
             self.staffingTableView.reloadData()
         }
+        censusControl.plusButton.accessibilityLabel = "Increase Census"
+        censusControl.minusButton.accessibilityLabel = "Decrease Census"
+        censusControl.valueField.accessibilityLabel = "Current Census"
 
         varianceReasonDropdown.selectedItemChangedCallback = {
             selectedItem in
