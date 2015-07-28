@@ -74,8 +74,12 @@ class ParseData {
             return NSError(domain: "com.lelander.staffingwidget", code: response!.statusCode, userInfo: [
                 NSLocalizedDescriptionKey: description, NSLocalizedFailureReasonErrorKey: error, "errorCode": errorCode
                 ])
-        } else {
+        } else if response != nil {
             return NSError(domain: "com.lelander.staffingwidget", code: response!.statusCode, userInfo: [
+                NSLocalizedDescriptionKey: description, NSLocalizedFailureReasonErrorKey: error.localizedDescription
+                ])
+        } else {
+            return NSError(domain: "com.lelander.staffingwidget", code: error.code, userInfo: [
                 NSLocalizedDescriptionKey: description, NSLocalizedFailureReasonErrorKey: error.localizedDescription
                 ])
         }

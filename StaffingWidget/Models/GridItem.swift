@@ -28,7 +28,7 @@ struct GridItem: Equatable
     // MARK: - Read-only properties
     
     var actualStaff: Double {
-        return availableStaff - Double(changes.reduce(0, combine: { return $0 + $1.count }))
+        return availableStaff + Double(changes.reduce(0, combine: { return $0 + $1.count }))
     }
     
     var resourceVariance: Double {
@@ -58,9 +58,20 @@ struct GridItem: Equatable
     }
 
     var changeDescriptions: [String] {
-        return changes.filter({ $0.count > 0 }).map({ $0.description })
+        return changes.map({ $0.count > 0 ? $0.description : $0.reversedChange!.description })
     }
 
+    /**
+     * Add the change or combine it with existing changes so the list of changes is as simple as
+     * possible.
+     *
+     * This is done by combining it with a change in the same direction, so for example, dragging
+     * a Nurse from A to B and then dragging another Nurse from A to B will result in a single
+     * change with a count of 2.
+     *
+     * Similarily, calling in an extra SEC to A and then flexing off a SEC from A will cancel out
+     * the original change.
+     */
     mutating func addChange(change: StaffChange) {
         var matchIndex = find(changes, change)
         var reverseMatchIndex = change.reversedChange != nil ? find(changes, change.reversedChange!) : nil

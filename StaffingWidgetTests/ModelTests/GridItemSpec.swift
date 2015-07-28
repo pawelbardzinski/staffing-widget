@@ -6,7 +6,7 @@ class GridItemSpec: QuickSpec {
         describe("a grid item") {
             var gridItem: GridItem?
             let testGrid =  [1,1,1,2,2,2,3,3,3,4,4,4,5,5,5,6,6,6]
-            beforeEach(){
+            beforeEach() {
                 gridItem = GridItem(objectId: "131181", staffTypeName:"CNA", index: 3, staffGrid:testGrid, required:true, visible:true, availableStaff: 6, requestedStaff:6, changes: [])
             }
             it("should have a max census that is 1 less than the number of grid entries") {

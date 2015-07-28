@@ -12,6 +12,7 @@ enum StaffingColors {
     case LateUnfilledRecord, LateUnconfirmedRecord, CompleteRecord, UpcomingRecord
     case FlexOff(highlighted: Bool)
     case CallInExtra(highlighted: Bool)
+    case PostiveVariance, NoVariance, NegativeVariance
     
     func color() -> UIColor {
         switch (self) {
@@ -27,6 +28,12 @@ enum StaffingColors {
             return UIColor(red:0.96, green:0.26, blue:0.21, alpha: highlighted ? 0.2 : 0.1)
         case .CallInExtra(let highlighted):
             return UIColor(red:0.3, green:0.69, blue:0.31, alpha: highlighted ? 0.2 : 0.1)
+        case .PostiveVariance:
+            return UIColor(red: 0.8, green: 1, blue: 0.8, alpha: 1)
+        case .NoVariance:
+            return UIColor.clearColor()
+        case .NegativeVariance:
+            return UIColor(red: 1, green: 0.8, blue: 0.8, alpha: 1)
         default:
             return UIColor.blackColor()
         }

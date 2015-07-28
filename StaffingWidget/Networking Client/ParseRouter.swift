@@ -26,7 +26,8 @@ enum ParseRouter: URLRequestConvertible {
     case SaveWorksheet(worksheet: Worksheet)
     case GetFacility(facilityId: String)
     case GetLastDayRecords(facilityId: String)
-    case GetInstanceTargetReport(thisMonth: String?)
+    case GetInstanceTargetByStaffTypeReport(thisMonth: String?)
+    case GetPersonHoursReport(thisMonth: String?)
     
     var method: Alamofire.Method {
         switch self {
@@ -56,7 +57,9 @@ enum ParseRouter: URLRequestConvertible {
             return .POST
         case .GetLastDayRecords(let facilityId):
             return .POST
-        case .GetInstanceTargetReport(let thisMonth):
+        case .GetInstanceTargetByStaffTypeReport(let thisMonth):
+            return .POST
+        case .GetPersonHoursReport(let thisMonth):
             return .POST
         }
     }
@@ -95,8 +98,10 @@ enum ParseRouter: URLRequestConvertible {
             return "/functions/getFacility/"
         case .GetLastDayRecords(let facilityId):
             return "/functions/getLastDayRecords"
-        case .GetInstanceTargetReport(let thisMonth):
-            return "/functions/instanceTargetReport"
+        case .GetInstanceTargetByStaffTypeReport(let thisMonth):
+            return "/functions/instanceTargetByStaffTypeReport"
+        case .GetPersonHoursReport(let thisMonth):
+            return "/functions/personHoursByUnitReport"
         }
     }
     
@@ -182,7 +187,7 @@ enum ParseRouter: URLRequestConvertible {
             ]
             
             return ParameterEncoding.JSON.encode(mutableURLRequest, parameters: json).0
-        case .GetInstanceTargetReport(let thisMonth):
+        case .GetInstanceTargetByStaffTypeReport(let thisMonth):
             
             if let monthString = thisMonth
             {
@@ -195,6 +200,18 @@ enum ParseRouter: URLRequestConvertible {
                 return ParameterEncoding.JSON.encode(mutableURLRequest, parameters: [:]).0
             }
             
+        case .GetPersonHoursReport(let thisMonth):
+            
+            if let monthString = thisMonth
+            {
+                let json: [String: AnyObject] = [
+                    "thisMonthString": monthString
+                ]
+                
+                return ParameterEncoding.JSON.encode(mutableURLRequest, parameters: json).0
+            } else {
+                return ParameterEncoding.JSON.encode(mutableURLRequest, parameters: [:]).0
+            }
         default:
             return mutableURLRequest
         }
